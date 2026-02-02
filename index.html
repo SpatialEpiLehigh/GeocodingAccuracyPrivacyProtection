@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Eric Delmelle">
+<meta name="dcterms.date" content="2026-02-02">
+
+<title>Geocoding Accuracy and Privacy Protection in Spatial Health Studies</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="privacy_files/libs/clipboard/clipboard.min.js"></script>
+<script src="privacy_files/libs/quarto-html/quarto.js"></script>
+<script src="privacy_files/libs/quarto-html/popper.min.js"></script>
+<script src="privacy_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="privacy_files/libs/quarto-html/anchor.min.js"></script>
+<link href="privacy_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="privacy_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="privacy_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="privacy_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="privacy_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+<script src="privacy_files/libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="privacy_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<link href="privacy_files/libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+<script src="privacy_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="privacy_files/libs/viz-1.8.2/viz.js"></script>
+<link href="privacy_files/libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
+<script src="privacy_files/libs/grViz-binding-1.0.11/grViz.js"></script>
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a></li>
+  <li><a href="#the-geocoding-positional-error-problem" id="toc-the-geocoding-positional-error-problem" class="nav-link" data-scroll-target="#the-geocoding-positional-error-problem"><span class="header-section-number">2</span> The Geocoding Positional Error Problem</a>
+  <ul class="collapse">
+  <li><a href="#magnitude-and-characteristics" id="toc-magnitude-and-characteristics" class="nav-link" data-scroll-target="#magnitude-and-characteristics"><span class="header-section-number">2.1</span> Magnitude and Characteristics</a>
+  <ul class="collapse">
+  <li><a href="#sources-of-error" id="toc-sources-of-error" class="nav-link" data-scroll-target="#sources-of-error"><span class="header-section-number">2.1.1</span> Sources of Error</a></li>
+  </ul></li>
+  <li><a href="#impact-on-nearest-neighbor-relationships" id="toc-impact-on-nearest-neighbor-relationships" class="nav-link" data-scroll-target="#impact-on-nearest-neighbor-relationships"><span class="header-section-number">2.2</span> Impact on Nearest Neighbor Relationships</a></li>
+  </ul></li>
+  <li><a href="#the-privacy-utility-tradeoff" id="toc-the-privacy-utility-tradeoff" class="nav-link" data-scroll-target="#the-privacy-utility-tradeoff"><span class="header-section-number">3</span> The Privacy-Utility Tradeoff</a>
+  <ul class="collapse">
+  <li><a href="#hipaas-3-digit-zip-code-rule" id="toc-hipaas-3-digit-zip-code-rule" class="nav-link" data-scroll-target="#hipaas-3-digit-zip-code-rule"><span class="header-section-number">3.1</span> HIPAA’s 3-Digit ZIP Code Rule</a></li>
+  <li><a href="#impact-on-disease-cluster-detection" id="toc-impact-on-disease-cluster-detection" class="nav-link" data-scroll-target="#impact-on-disease-cluster-detection"><span class="header-section-number">3.2</span> Impact on Disease Cluster Detection</a></li>
+  <li><a href="#when-clusters-cross-boundaries" id="toc-when-clusters-cross-boundaries" class="nav-link" data-scroll-target="#when-clusters-cross-boundaries"><span class="header-section-number">3.3</span> When Clusters Cross Boundaries</a></li>
+  <li><a href="#quantifying-hipaas-impact-florida-influenza-study" id="toc-quantifying-hipaas-impact-florida-influenza-study" class="nav-link" data-scroll-target="#quantifying-hipaas-impact-florida-influenza-study"><span class="header-section-number">3.4</span> Quantifying HIPAA’s Impact: Florida Influenza Study</a>
+  <ul class="collapse">
+  <li><a href="#public-health-consequences" id="toc-public-health-consequences" class="nav-link" data-scroll-target="#public-health-consequences"><span class="header-section-number">3.4.1</span> Public Health Consequences</a></li>
+  </ul></li>
+  <li><a href="#systematic-geographic-bias" id="toc-systematic-geographic-bias" class="nav-link" data-scroll-target="#systematic-geographic-bias"><span class="header-section-number">3.5</span> Systematic Geographic Bias</a></li>
+  </ul></li>
+  <li><a href="#recommendations-and-research-agenda" id="toc-recommendations-and-research-agenda" class="nav-link" data-scroll-target="#recommendations-and-research-agenda"><span class="header-section-number">4</span> Recommendations and Research Agenda</a>
+  <ul class="collapse">
+  <li><a href="#for-researchers" id="toc-for-researchers" class="nav-link" data-scroll-target="#for-researchers"><span class="header-section-number">4.1</span> For Researchers</a>
+  <ul class="collapse">
+  <li><a href="#reporting-standards" id="toc-reporting-standards" class="nav-link" data-scroll-target="#reporting-standards"><span class="header-section-number">4.1.1</span> Reporting Standards</a></li>
+  <li><a href="#when-to-be-especially-concerned" id="toc-when-to-be-especially-concerned" class="nav-link" data-scroll-target="#when-to-be-especially-concerned"><span class="header-section-number">4.1.2</span> When to Be Especially Concerned</a></li>
+  </ul></li>
+  <li><a href="#for-policy-makers" id="toc-for-policy-makers" class="nav-link" data-scroll-target="#for-policy-makers"><span class="header-section-number">4.2</span> For Policy Makers</a>
+  <ul class="collapse">
+  <li><a href="#five-critical-research-needs-jacquez2012" id="toc-five-critical-research-needs-jacquez2012" class="nav-link" data-scroll-target="#five-critical-research-needs-jacquez2012"><span class="header-section-number">4.2.1</span> Five Critical Research Needs <span class="citation" data-cites="Jacquez2012">(Jacquez 2012)</span></a></li>
+  <li><a href="#hipaa-reform-proposals" id="toc-hipaa-reform-proposals" class="nav-link" data-scroll-target="#hipaa-reform-proposals"><span class="header-section-number">4.2.2</span> HIPAA Reform Proposals</a></li>
+  </ul></li>
+  <li><a href="#for-public-health-practice" id="toc-for-public-health-practice" class="nav-link" data-scroll-target="#for-public-health-practice"><span class="header-section-number">4.3</span> For Public Health Practice</a>
+  <ul class="collapse">
+  <li><a href="#decision-tree-for-handling-geocoding-issues" id="toc-decision-tree-for-handling-geocoding-issues" class="nav-link" data-scroll-target="#decision-tree-for-handling-geocoding-issues"><span class="header-section-number">4.3.1</span> Decision Tree for Handling Geocoding Issues</a></li>
+  <li><a href="#best-practices-checklist" id="toc-best-practices-checklist" class="nav-link" data-scroll-target="#best-practices-checklist"><span class="header-section-number">4.3.2</span> Best Practices Checklist</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#conclusions" id="toc-conclusions" class="nav-link" data-scroll-target="#conclusions"><span class="header-section-number">5</span> Conclusions</a>
+  <ul class="collapse">
+  <li><a href="#summary-of-evidence" id="toc-summary-of-evidence" class="nav-link" data-scroll-target="#summary-of-evidence"><span class="header-section-number">5.1</span> Summary of Evidence</a></li>
+  <li><a href="#the-path-forward" id="toc-the-path-forward" class="nav-link" data-scroll-target="#the-path-forward"><span class="header-section-number">5.2</span> The Path Forward</a></li>
+  <li><a href="#final-thoughts" id="toc-final-thoughts" class="nav-link" data-scroll-target="#final-thoughts"><span class="header-section-number">5.3</span> Final Thoughts</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Geocoding Accuracy and Privacy Protection in Spatial Health Studies</h1>
+<p class="subtitle lead">Critical Challenges in Geographic Health Research</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Eric Delmelle </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">February 2, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="introduction" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Introduction</h1>
+<p>Geocoding—the process of converting addresses to geographic coordinates—is fundamental to spatial epidemiology. Yet this seemingly straightforward task presents two critical challenges that can substantially affect research validity:</p>
+<ol type="1">
+<li><strong>Positional accuracy</strong>: How close are geocoded locations to true locations?</li>
+<li><strong>Privacy protection</strong>: How can we protect patient confidentiality while maintaining analytical utility?</li>
+</ol>
+<p>This document synthesizes findings from four key papers examining these interrelated challenges and their implications for disease cluster detection and public health decision-making.</p>
+</section>
+<section id="the-geocoding-positional-error-problem" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> The Geocoding Positional Error Problem</h1>
+<section id="magnitude-and-characteristics" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="magnitude-and-characteristics"><span class="header-section-number">2.1</span> Magnitude and Characteristics</h2>
+<p><span class="citation" data-cites="Jacquez2012">Jacquez (<a href="#ref-Jacquez2012" role="doc-biblioref">2012</a>)</span> provides compelling evidence that geocoding errors are both substantial and spatially patterned:</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>error_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Study =</span> <span class="fu">c</span>(<span class="st">"Bonner et al. 2003"</span>, <span class="st">"Cayo &amp; Talbot 2003"</span>, <span class="st">"Cayo &amp; Talbot 2003"</span>, </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>            <span class="st">"Ward et al. 2005"</span>, <span class="st">"Ward et al. 2005"</span>),</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Setting =</span> <span class="fu">c</span>(<span class="st">"Urban"</span>, <span class="st">"Urban"</span>, <span class="st">"Rural"</span>, <span class="st">"Urban"</span>, <span class="st">"Rural"</span>),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Mean_Error_m =</span> <span class="fu">c</span>(<span class="dv">96</span>, <span class="dv">58</span>, <span class="dv">614</span>, <span class="dv">77</span>, <span class="dv">210</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Setting =</span> <span class="fu">factor</span>(Setting, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Urban"</span>, <span class="st">"Rural"</span>)))</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(error_data, <span class="fu">aes</span>(<span class="at">x =</span> Study, <span class="at">y =</span> Mean_Error_m, <span class="at">fill =</span> Setting)) <span class="sc">+</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.8</span>), <span class="at">width =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Urban"</span> <span class="ot">=</span> <span class="st">"#2C5F87"</span>, <span class="st">"Rural"</span> <span class="ot">=</span> <span class="st">"#8B4513"</span>)) <span class="sc">+</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Mean Geocoding Positional Errors by Study and Setting"</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Study"</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Mean Positional Error (meters)"</span>,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Setting"</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">100</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">4</span>, <span class="at">y =</span> <span class="dv">120</span>, <span class="at">label =</span> <span class="st">"100m threshold"</span>, </span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-error-magnitudes" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="privacy_files/figure-html/fig-error-magnitudes-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption class="figure-caption">Figure&nbsp;1: Geocoding positional error magnitudes by setting (from literature review)</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Key Statistics
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Mean errors</strong>: 58-96 m in urban areas; 129-614 m in rural settings</li>
+<li><strong>Maximum observed error</strong>: Nearly 19 km (Cayo &amp; Talbot 2003)</li>
+<li><strong>Rural errors</strong>: 2-10× larger than urban errors</li>
+</ul>
+</div>
+</div>
+<section id="sources-of-error" class="level3" data-number="2.1.1">
+<h3 data-number="2.1.1" class="anchored" data-anchor-id="sources-of-error"><span class="header-section-number">2.1.1</span> Sources of Error</h3>
+<p>The geocoding process makes several assumptions that, when violated, introduce positional error:</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create illustration of parcel homogeneity assumption</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(grid)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a simple visualization</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">1</span>))</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="cn">NA</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">3</span>), <span class="at">axes =</span> <span class="cn">FALSE</span>, <span class="at">xlab =</span> <span class="st">""</span>, <span class="at">ylab =</span> <span class="st">""</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Parcel Homogeneity Assumption in Street Geocoding"</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Draw street segment</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">segments</span>(<span class="dv">1</span>, <span class="fl">1.5</span>, <span class="dv">9</span>, <span class="fl">1.5</span>, <span class="at">lwd =</span> <span class="dv">3</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">0.5</span>, <span class="fl">1.5</span>, <span class="st">"Main Street"</span>, <span class="at">pos =</span> <span class="dv">2</span>, <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Draw address range</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">1</span>, <span class="fl">1.2</span>, <span class="st">"600"</span>, <span class="at">cex =</span> <span class="fl">0.7</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">9</span>, <span class="fl">1.2</span>, <span class="st">"649"</span>, <span class="at">cex =</span> <span class="fl">0.7</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Draw assumed parcel boundaries (equal spacing)</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) {</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  x_pos <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">+</span> (i <span class="sc">*</span> <span class="fl">1.6</span>)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">segments</span>(x_pos, <span class="fl">1.3</span>, x_pos, <span class="fl">1.7</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"gray50"</span>)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rect</span>(x_pos <span class="sc">-</span> <span class="fl">0.7</span>, <span class="fl">1.8</span>, x_pos <span class="sc">+</span> <span class="fl">0.7</span>, <span class="fl">2.5</span>, <span class="at">border =</span> <span class="st">"darkblue"</span>, <span class="at">lwd =</span> <span class="dv">1</span>)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Show interpolation point</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(<span class="dv">5</span>, <span class="fl">1.5</span>, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">cex =</span> <span class="fl">1.5</span>)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">5</span>, <span class="dv">1</span>, <span class="st">"620 Main St</span><span class="sc">\n</span><span class="st">(interpolated)"</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Add arrow showing interpolation</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="fu">arrows</span>(<span class="dv">3</span>, <span class="fl">0.5</span>, <span class="dv">5</span>, <span class="fl">1.3</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">length =</span> <span class="fl">0.1</span>)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">2.5</span>, <span class="fl">0.3</span>, <span class="st">"Linear interpolation</span><span class="sc">\n</span><span class="st">assumes equal spacing"</span>, <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">col =</span> <span class="st">"red"</span>)</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Add note about reality</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">5</span>, <span class="fl">2.8</span>, <span class="st">"Reality: Parcels vary in size, buildings not at centroids"</span>, </span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>     <span class="at">cex =</span> <span class="fl">0.8</span>, <span class="at">font =</span> <span class="dv">3</span>, <span class="at">col =</span> <span class="st">"darkred"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-parcel-homogeneity" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="privacy_files/figure-html/fig-parcel-homogeneity-1.png" class="img-fluid figure-img" width="768"></p>
+<figcaption class="figure-caption">Figure&nbsp;2: The parcel homogeneity assumption: addresses are assumed evenly distributed along street segments (reproduced from Jacquez 2012, Figure 1)</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Three primary causes drive geocoding failure and positional error:</p>
+<ol type="1">
+<li><strong>Incorrect addresses</strong> in subject records (misspellings, abbreviations)</li>
+<li><strong>Rural route/PO box numbers</strong> instead of street addresses<br>
+</li>
+<li><strong>Missing street segments</strong> in reference databases (e.g., TIGER files)</li>
+</ol>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Key Finding
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The third cause—missing street segments—produces <strong>spatially clustered</strong> geocoding failures, with potentially severe consequences for spatial analysis <span class="citation" data-cites="Zimmerman2008">(<a href="#ref-Zimmerman2008" role="doc-biblioref">Zimmerman, Fang, and Mazumdar 2008</a>)</span>.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="impact-on-nearest-neighbor-relationships" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="impact-on-nearest-neighbor-relationships"><span class="header-section-number">2.2</span> Impact on Nearest Neighbor Relationships</h2>
+<p><span class="citation" data-cites="Jacquez2012">Jacquez (<a href="#ref-Jacquez2012" role="doc-biblioref">2012</a>)</span> demonstrates dramatic effects of positional error on spatial weights through nearest neighbor misidentification:</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate the relationship shown in Jacquez Figure 3</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>pop_density <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">30000</span>, <span class="at">by =</span> <span class="dv">500</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Error functions (approximated from paper)</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>error_50 <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">exp</span>(<span class="sc">-</span>pop_density <span class="sc">/</span> <span class="dv">8000</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>error_150 <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">exp</span>(<span class="sc">-</span>pop_density <span class="sc">/</span> <span class="dv">4000</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>error_450 <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">exp</span>(<span class="sc">-</span>pop_density <span class="sc">/</span> <span class="dv">2000</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>nn_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">PopDensity =</span> <span class="fu">rep</span>(pop_density, <span class="dv">3</span>),</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">MismatchProp =</span> <span class="fu">c</span>(error_50, error_150, error_450),</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">ErrorLevel =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"50m"</span>, <span class="st">"150m"</span>, <span class="st">"450m"</span>), <span class="at">each =</span> <span class="fu">length</span>(pop_density))</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(nn_data, <span class="fu">aes</span>(<span class="at">x =</span> PopDensity, <span class="at">y =</span> MismatchProp, <span class="at">color =</span> ErrorLevel)) <span class="sc">+</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"50m"</span> <span class="ot">=</span> <span class="st">"#2C5F87"</span>, <span class="st">"150m"</span> <span class="ot">=</span> <span class="st">"#D69C4E"</span>, </span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"450m"</span> <span class="ot">=</span> <span class="st">"#8B0000"</span>)) <span class="sc">+</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>comma) <span class="sc">+</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"point"</span>, <span class="at">x =</span> <span class="dv">27000</span>, <span class="at">y =</span> <span class="fl">0.95</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">26000</span>, <span class="at">y =</span> <span class="fl">0.85</span>, <span class="at">label =</span> <span class="st">"Manhattan</span><span class="sc">\n</span><span class="st">density"</span>, </span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="fl">3.5</span>) <span class="sc">+</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"First Nearest Neighbor Mismatch by Population Density"</span>,</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Higher density + larger errors = nearly complete misidentification"</span>,</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Population Density (persons/km²)"</span>,</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Proportion of 1st NN Mismatches"</span>,</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Mean Positional</span><span class="sc">\n</span><span class="st">Error"</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.15</span>, <span class="fl">0.75</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: A numeric `legend.position` argument in `theme()` was deprecated in ggplot2
+3.5.0.
+ℹ Please use the `legend.position.inside` argument of `theme()` instead.</code></pre>
+</div>
+<div class="cell-output-display">
+<div id="fig-nn-mismatch" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="privacy_files/figure-html/fig-nn-mismatch-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption class="figure-caption">Figure&nbsp;3: Proportion of first nearest neighbor mismatches vs.&nbsp;population density at different error levels (reproduced from Jacquez &amp; Rommel 2009, Figure 3)</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Recreate the Michigan study results</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>error_distance <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1400</span>, <span class="at">by =</span> <span class="dv">50</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>mismatch_prop <span class="ot">&lt;-</span> error_distance <span class="sc">*</span> <span class="fl">0.00032</span>  <span class="co"># Approximate linear relationship from paper</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>michigan_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">ErrorDistance =</span> error_distance,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">MismatchProp =</span> mismatch_prop</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(michigan_data, <span class="fu">aes</span>(<span class="at">x =</span> ErrorDistance, <span class="at">y =</span> MismatchProp)) <span class="sc">+</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"#2C5F87"</span>, <span class="at">size =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> <span class="fu">filter</span>(michigan_data, ErrorDistance <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">200</span>, <span class="dv">600</span>, <span class="dv">1000</span>)),</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">"#D69C4E"</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.5</span>)) <span class="sc">+</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"rect"</span>, <span class="at">xmin =</span> <span class="dv">150</span>, <span class="at">xmax =</span> <span class="dv">250</span>, <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> <span class="fl">0.1</span>, </span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>           <span class="at">alpha =</span> <span class="fl">0.2</span>, <span class="at">fill =</span> <span class="st">"green"</span>) <span class="sc">+</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">200</span>, <span class="at">y =</span> <span class="fl">0.11</span>, </span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="st">"At 200m error:</span><span class="sc">\n</span><span class="st">8% mismatch"</span>, <span class="at">size =</span> <span class="fl">3.5</span>) <span class="sc">+</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"First Nearest Neighbor Mismatch: Michigan Case-Control Study"</span>,</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Population density typical of southeastern Michigan"</span>,</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Mean Geocoding Error Distance (meters)"</span>,</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Proportion of 1st NN Mismatch"</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-michigan-nn" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="privacy_files/figure-html/fig-michigan-nn-1.png" class="img-fluid figure-img" width="768"></p>
+<figcaption class="figure-caption">Figure&nbsp;4: Nearest neighbor mismatch in Michigan bladder cancer study (reproduced from Jacquez &amp; Rommel 2009, Figure 4)</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Impact on Spatial Weights
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>At <strong>200m</strong> error: 8% of nearest neighbors misidentified</li>
+<li>At <strong>typical urban densities</strong>: Approaches 100% mismatch</li>
+<li>Effect <strong>decreases</strong> as number of neighbors (k) increases</li>
+</ul>
+</div>
+</div>
+</section>
+</section>
+<section id="the-privacy-utility-tradeoff" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> The Privacy-Utility Tradeoff</h1>
+<section id="hipaas-3-digit-zip-code-rule" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="hipaas-3-digit-zip-code-rule"><span class="header-section-number">3.1</span> HIPAA’s 3-Digit ZIP Code Rule</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Illustrate the aggregation process</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">2</span>))</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Original 5-digit data</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="cn">NA</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="at">axes =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Original Data</span><span class="sc">\n</span><span class="st">(5-digit ZIP codes)"</span>, <span class="at">xlab =</span> <span class="st">""</span>, <span class="at">ylab =</span> <span class="st">""</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">rect</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">10</span>, <span class="dv">10</span>, <span class="at">border =</span> <span class="st">"black"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Draw 4 five-digit regions</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">rect</span>(<span class="dv">0</span>, <span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="at">border =</span> <span class="st">"blue"</span>, <span class="at">lwd =</span> <span class="fl">1.5</span>)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">2.5</span>, <span class="dv">9</span>, <span class="st">"55501"</span>, <span class="at">cex =</span> <span class="fl">1.2</span>, <span class="at">col =</span> <span class="st">"blue"</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">2.5</span>, <span class="fl">7.5</span>, <span class="st">"8 cases"</span>, <span class="at">cex =</span> <span class="fl">0.9</span>, <span class="at">col =</span> <span class="st">"blue"</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(<span class="fu">runif</span>(<span class="dv">8</span>, <span class="fl">0.5</span>, <span class="fl">4.5</span>), <span class="fu">runif</span>(<span class="dv">8</span>, <span class="fl">5.5</span>, <span class="fl">9.5</span>), <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="fu">rect</span>(<span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">10</span>, <span class="at">border =</span> <span class="st">"blue"</span>, <span class="at">lwd =</span> <span class="fl">1.5</span>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">7.5</span>, <span class="dv">9</span>, <span class="st">"55502"</span>, <span class="at">cex =</span> <span class="fl">1.2</span>, <span class="at">col =</span> <span class="st">"blue"</span>)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">7.5</span>, <span class="fl">7.5</span>, <span class="st">"12 cases"</span>, <span class="at">cex =</span> <span class="fl">0.9</span>, <span class="at">col =</span> <span class="st">"blue"</span>)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(<span class="fu">runif</span>(<span class="dv">12</span>, <span class="fl">5.5</span>, <span class="fl">9.5</span>), <span class="fu">runif</span>(<span class="dv">12</span>, <span class="fl">5.5</span>, <span class="fl">9.5</span>), <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="fu">rect</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">5</span>, <span class="dv">5</span>, <span class="at">border =</span> <span class="st">"blue"</span>, <span class="at">lwd =</span> <span class="fl">1.5</span>)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">2.5</span>, <span class="dv">4</span>, <span class="st">"55503"</span>, <span class="at">cex =</span> <span class="fl">1.2</span>, <span class="at">col =</span> <span class="st">"blue"</span>)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">2.5</span>, <span class="fl">2.5</span>, <span class="st">"5 cases"</span>, <span class="at">cex =</span> <span class="fl">0.9</span>, <span class="at">col =</span> <span class="st">"blue"</span>)</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(<span class="fu">runif</span>(<span class="dv">5</span>, <span class="fl">0.5</span>, <span class="fl">4.5</span>), <span class="fu">runif</span>(<span class="dv">5</span>, <span class="fl">0.5</span>, <span class="fl">4.5</span>), <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="fu">rect</span>(<span class="dv">5</span>, <span class="dv">0</span>, <span class="dv">10</span>, <span class="dv">5</span>, <span class="at">border =</span> <span class="st">"blue"</span>, <span class="at">lwd =</span> <span class="fl">1.5</span>)</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">7.5</span>, <span class="dv">4</span>, <span class="st">"55504"</span>, <span class="at">cex =</span> <span class="fl">1.2</span>, <span class="at">col =</span> <span class="st">"blue"</span>)</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">7.5</span>, <span class="fl">2.5</span>, <span class="st">"15 cases"</span>, <span class="at">cex =</span> <span class="fl">0.9</span>, <span class="at">col =</span> <span class="st">"blue"</span>)</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(<span class="fu">runif</span>(<span class="dv">15</span>, <span class="fl">5.5</span>, <span class="fl">9.5</span>), <span class="fu">runif</span>(<span class="dv">15</span>, <span class="fl">0.5</span>, <span class="fl">4.5</span>), <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregated 3-digit data</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="cn">NA</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="at">axes =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"HIPAA-Compliant Data</span><span class="sc">\n</span><span class="st">(3-digit ZIP code)"</span>, <span class="at">xlab =</span> <span class="st">""</span>, <span class="at">ylab =</span> <span class="st">""</span>)</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="fu">rect</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">10</span>, <span class="dv">10</span>, <span class="at">border =</span> <span class="st">"black"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">5</span>, <span class="dv">9</span>, <span class="st">"555"</span>, <span class="at">cex =</span> <span class="fl">1.5</span>, <span class="at">col =</span> <span class="st">"darkred"</span>, <span class="at">font =</span> <span class="dv">2</span>)</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">5</span>, <span class="fl">7.5</span>, <span class="st">"40 cases"</span>, <span class="at">cex =</span> <span class="fl">1.2</span>, <span class="at">col =</span> <span class="st">"darkred"</span>)</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a><span class="co"># All cases moved to centroid</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(<span class="fu">rep</span>(<span class="dv">5</span>, <span class="dv">40</span>), <span class="fu">rep</span>(<span class="dv">5</span>, <span class="dv">40</span>), <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">cex =</span> <span class="fl">1.5</span>)</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">5</span>, <span class="dv">3</span>, <span class="st">"All cases</span><span class="sc">\n</span><span class="st">aggregated to</span><span class="sc">\n</span><span class="st">centroid"</span>, <span class="at">cex =</span> <span class="dv">1</span>, <span class="at">col =</span> <span class="st">"darkred"</span>)</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a><span class="fu">arrows</span>(<span class="dv">8</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">5</span>, <span class="at">length =</span> <span class="fl">0.15</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"darkgreen"</span>)</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">7</span>, <span class="fl">5.5</span>, <span class="st">"Aggregation"</span>, <span class="at">col =</span> <span class="st">"darkgreen"</span>, <span class="at">font =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-aggregation-process" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="privacy_files/figure-html/fig-aggregation-process-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption class="figure-caption">Figure&nbsp;5: Converting 5-digit to 3-digit ZIP code data for HIPAA compliance (reproduced concept from Olson et al.&nbsp;2006)</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The Modifiable Areal Unit Problem (MAUP)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Aggregating from 5-digit to 3-digit ZIP codes:</p>
+<ul>
+<li>Reduces spatial precision</li>
+<li>Moves data to centroids<br>
+</li>
+<li>Can blur or create artificial patterns</li>
+<li>Introduces systematic bias</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="impact-on-disease-cluster-detection" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="impact-on-disease-cluster-detection"><span class="header-section-number">3.2</span> Impact on Disease Cluster Detection</h2>
+<p><span class="citation" data-cites="Olson2006">Olson, Grannis, and Mandl (<a href="#ref-Olson2006" role="doc-biblioref">2006</a>)</span> compared cluster detection at different levels.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Key Findings from Olson et al.
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><strong>Detection rates drop</strong> when aggregating to centroids</li>
+<li><strong>Spurious cases increase</strong> (cluster “dilution”)</li>
+<li><strong>Effect worst</strong> when clusters cross administrative boundaries</li>
+<li><strong>Power substantially reduced</strong> when disease and geocoding failure are associated</li>
+</ol>
+</div>
+</div>
+</section>
+<section id="when-clusters-cross-boundaries" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="when-clusters-cross-boundaries"><span class="header-section-number">3.3</span> When Clusters Cross Boundaries</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">1</span>))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Scenario 1: Cluster within single ZIP</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="cn">NA</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="at">axes =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Cluster Within Single ZIP Code"</span>, <span class="at">xlab =</span> <span class="st">""</span>, <span class="at">ylab =</span> <span class="st">""</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">rect</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">10</span>, <span class="dv">10</span>, <span class="at">border =</span> <span class="st">"blue"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">5</span>, <span class="fl">9.5</span>, <span class="st">"ZIP 55501"</span>, <span class="at">col =</span> <span class="st">"blue"</span>, <span class="at">font =</span> <span class="dv">2</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Add cluster</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">2</span><span class="sc">*</span>pi, <span class="at">length.out =</span> <span class="dv">100</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="dv">6</span> <span class="sc">+</span> <span class="fl">1.5</span><span class="sc">*</span><span class="fu">cos</span>(theta), <span class="dv">5</span> <span class="sc">+</span> <span class="fl">1.5</span><span class="sc">*</span><span class="fu">sin</span>(theta), </span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">border =</span> <span class="st">"red"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(<span class="fu">rnorm</span>(<span class="dv">10</span>, <span class="dv">6</span>, <span class="fl">0.5</span>), <span class="fu">rnorm</span>(<span class="dv">10</span>, <span class="dv">5</span>, <span class="fl">0.5</span>), <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">cex =</span> <span class="fl">1.2</span>)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">6</span>, <span class="dv">3</span>, <span class="st">"When aggregated:</span><span class="sc">\n</span><span class="st">10/10 cases at centroid</span><span class="sc">\n</span><span class="st">EASY to detect"</span>, </span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>     <span class="at">cex =</span> <span class="fl">0.9</span>, <span class="at">col =</span> <span class="st">"darkgreen"</span>)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Scenario 2: Cluster crosses boundary</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="cn">NA</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="at">axes =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Cluster Crosses ZIP Boundary"</span>, <span class="at">xlab =</span> <span class="st">""</span>, <span class="at">ylab =</span> <span class="st">""</span>)</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="fu">rect</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="at">border =</span> <span class="st">"blue"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">2.5</span>, <span class="fl">9.5</span>, <span class="st">"ZIP 55501"</span>, <span class="at">col =</span> <span class="st">"blue"</span>, <span class="at">font =</span> <span class="dv">2</span>)</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="fu">rect</span>(<span class="dv">5</span>, <span class="dv">0</span>, <span class="dv">10</span>, <span class="dv">10</span>, <span class="at">border =</span> <span class="st">"blue"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">7.5</span>, <span class="fl">9.5</span>, <span class="st">"ZIP 55502"</span>, <span class="at">col =</span> <span class="st">"blue"</span>, <span class="at">font =</span> <span class="dv">2</span>)</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Add cluster spanning boundary</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="dv">5</span> <span class="sc">+</span> <span class="fl">1.5</span><span class="sc">*</span><span class="fu">cos</span>(theta), <span class="dv">5</span> <span class="sc">+</span> <span class="fl">1.5</span><span class="sc">*</span><span class="fu">sin</span>(theta), </span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>        <span class="at">border =</span> <span class="st">"red"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(<span class="fu">rnorm</span>(<span class="dv">5</span>, <span class="fl">4.5</span>, <span class="fl">0.4</span>), <span class="fu">rnorm</span>(<span class="dv">5</span>, <span class="dv">5</span>, <span class="fl">0.5</span>), <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">cex =</span> <span class="fl">1.2</span>)</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(<span class="fu">rnorm</span>(<span class="dv">5</span>, <span class="fl">5.5</span>, <span class="fl">0.4</span>), <span class="fu">rnorm</span>(<span class="dv">5</span>, <span class="dv">5</span>, <span class="fl">0.5</span>), <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">cex =</span> <span class="fl">1.2</span>)</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Show centroid aggregation</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(<span class="fl">2.5</span>, <span class="dv">5</span>, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"darkblue"</span>, <span class="at">cex =</span> <span class="dv">2</span>)</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">2.5</span>, <span class="fl">3.5</span>, <span class="st">"5 cases"</span>, <span class="at">col =</span> <span class="st">"darkblue"</span>, <span class="at">cex =</span> <span class="fl">0.9</span>)</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(<span class="fl">7.5</span>, <span class="dv">5</span>, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"darkblue"</span>, <span class="at">cex =</span> <span class="dv">2</span>)</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">7.5</span>, <span class="fl">3.5</span>, <span class="st">"5 cases"</span>, <span class="at">col =</span> <span class="st">"darkblue"</span>, <span class="at">cex =</span> <span class="fl">0.9</span>)</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">5</span>, <span class="dv">1</span>, <span class="st">"When aggregated:</span><span class="sc">\n</span><span class="st">5 cases at each centroid</span><span class="sc">\n</span><span class="st">HARDER to detect"</span>, </span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>     <span class="at">cex =</span> <span class="fl">0.9</span>, <span class="at">col =</span> <span class="st">"darkred"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-boundary-crossing" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="privacy_files/figure-html/fig-boundary-crossing-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption class="figure-caption">Figure&nbsp;6: Effect of boundary crossing on cluster detection (concept from Olson et al.&nbsp;2006)</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="quantifying-hipaas-impact-florida-influenza-study" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="quantifying-hipaas-impact-florida-influenza-study"><span class="header-section-number">3.4</span> Quantifying HIPAA’s Impact: Florida Influenza Study</h2>
+<p><span class="citation" data-cites="Tellman2010">Tellman et al. (<a href="#ref-Tellman2010" role="doc-biblioref">2010</a>)</span> presents a simulation study on the impact on N95 respirator allocation for influenza response</p>
+<section id="public-health-consequences" class="level3" data-number="3.4.1">
+<h3 data-number="3.4.1" class="anchored" data-anchor-id="public-health-consequences"><span class="header-section-number">3.4.1</span> Public Health Consequences</h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>allocation_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">City =</span> <span class="fu">c</span>(<span class="st">"Coastal City</span><span class="sc">\n</span><span class="st">(Pop. 50,000)"</span>, <span class="st">"Inland City</span><span class="sc">\n</span><span class="st">(Pop. 10,500)"</span>),</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">TrueNeed =</span> <span class="fu">c</span>(<span class="dv">16600</span>, <span class="dv">3500</span>),</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">With28PercentError =</span> <span class="fu">c</span>(<span class="dv">11952</span>, <span class="dv">4480</span>),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Type =</span> <span class="fu">c</span>(<span class="st">"Urban/Coastal"</span>, <span class="st">"Rural/Inland"</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(TrueNeed, With28PercentError),</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">"Scenario"</span>, <span class="at">values_to =</span> <span class="st">"Respirators"</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(allocation_data, <span class="fu">aes</span>(<span class="at">x =</span> City, <span class="at">y =</span> Respirators, <span class="at">fill =</span> Scenario)) <span class="sc">+</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.8</span>), <span class="at">width =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"TrueNeed"</span> <span class="ot">=</span> <span class="st">"#2C5F87"</span>, <span class="st">"With28PercentError"</span> <span class="ot">=</span> <span class="st">"#8B0000"</span>),</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"True Need"</span>, <span class="st">"With 28% Error"</span>)</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fl">0.75</span>, <span class="at">xend =</span> <span class="fl">1.25</span>, <span class="at">y =</span> <span class="dv">16600</span>, <span class="at">yend =</span> <span class="dv">11952</span>),</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.3</span>, <span class="st">"cm"</span>)),</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>               <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">15000</span>, <span class="at">label =</span> <span class="st">"Shortage:</span><span class="sc">\n</span><span class="st">4,648 respirators"</span>,</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="fl">3.5</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>) <span class="sc">+</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fl">1.75</span>, <span class="at">xend =</span> <span class="fl">2.25</span>, <span class="at">y =</span> <span class="dv">3500</span>, <span class="at">yend =</span> <span class="dv">4480</span>),</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.3</span>, <span class="st">"cm"</span>)),</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>               <span class="at">color =</span> <span class="st">"darkgreen"</span>, <span class="at">size =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">2</span>, <span class="at">y =</span> <span class="dv">4200</span>, <span class="at">label =</span> <span class="st">"Surplus:</span><span class="sc">\n</span><span class="st">980 respirators"</span>,</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> <span class="st">"darkgreen"</span>, <span class="at">size =</span> <span class="fl">3.5</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>) <span class="sc">+</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>comma) <span class="sc">+</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"HIPAA Error Creates Geographic Bias in Resource Allocation"</span>,</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Example: N95 respirators for 15% influenza attack rate"</span>,</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of N95 Respirators"</span>,</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>,</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Allocation Basis"</span></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-resource-allocation" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="privacy_files/figure-html/fig-resource-allocation-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption class="figure-caption">Figure&nbsp;7: Impact on N95 respirator allocation for influenza response</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="systematic-geographic-bias" class="level2 callout-danger" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="systematic-geographic-bias"><span class="header-section-number">3.5</span> Systematic Geographic Bias</h2>
+<ul>
+<li><strong>Urban/coastal areas</strong>: Underestimate needs → shortages</li>
+<li><strong>Rural/inland areas</strong>: Overestimate needs → surplus</li>
+<li>Overall: <strong>28% average error</strong> in allocation</li>
+</ul>
+</section>
+</section>
+<section id="recommendations-and-research-agenda" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Recommendations and Research Agenda</h1>
+<section id="for-researchers" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="for-researchers"><span class="header-section-number">4.1</span> For Researchers</h2>
+<section id="reporting-standards" class="level3" data-number="4.1.1">
+<h3 data-number="4.1.1" class="anchored" data-anchor-id="reporting-standards"><span class="header-section-number">4.1.1</span> Reporting Standards</h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Category =</span> <span class="fu">c</span>(<span class="st">"Completeness"</span>, <span class="st">"Completeness"</span>, <span class="st">"Accuracy"</span>, <span class="st">"Accuracy"</span>, </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Spatial Pattern"</span>, <span class="st">"Sensitivity"</span>, <span class="st">"Sensitivity"</span>),</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Item =</span> <span class="fu">c</span>(</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Overall geocoding success rate (%)"</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Success rate by subgroup (rural/urban, demographic)"</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Positional error distribution (mean, SD, range)"</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Validation method (if available)"</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Test for spatial clustering of failures"</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Power analysis or simulation"</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Robustness checks at different spatial scales"</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">Priority =</span> <span class="fu">c</span>(<span class="st">"Required"</span>, <span class="st">"Recommended"</span>, <span class="st">"Recommended"</span>, <span class="st">"If possible"</span>,</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Recommended"</span>, <span class="st">"Recommended"</span>, <span class="st">"Recommended"</span>)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">align =</span> <span class="fu">c</span>(<span class="st">'l'</span>, <span class="st">'l'</span>, <span class="st">'c'</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pack_rows</span>(<span class="st">"Geocoding Metrics"</span>, <span class="dv">1</span>, <span class="dv">4</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pack_rows</span>(<span class="st">"Spatial Analysis"</span>, <span class="dv">5</span>, <span class="dv">5</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pack_rows</span>(<span class="st">"Validity Checks"</span>, <span class="dv">6</span>, <span class="dv">7</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="dv">3</span>, <span class="at">bold =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: 'xfun::attr()' is deprecated.
+Use 'xfun::attr2()' instead.
+See help("Deprecated")</code></pre>
+</div>
+<div class="cell-output-display">
+<div id="tbl-reporting-checklist" class="anchored">
+<table class="table table-striped table-hover table-sm small" data-quarto-postprocess="true">
+<caption>Table&nbsp;1: Recommended geocoding reporting checklist for spatial epidemiology papers</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Category</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Item</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Priority</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd" data-grouplength="4">
+<td colspan="3" style="border-bottom: 1px solid"><strong>Geocoding Metrics</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Completeness</td>
+<td style="text-align: left;">Overall geocoding success rate (%)</td>
+<td style="text-align: center; font-weight: bold;">Required</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Completeness</td>
+<td style="text-align: left;">Success rate by subgroup (rural/urban, demographic)</td>
+<td style="text-align: center; font-weight: bold;">Recommended</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Accuracy</td>
+<td style="text-align: left;">Positional error distribution (mean, SD, range)</td>
+<td style="text-align: center; font-weight: bold;">Recommended</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Accuracy</td>
+<td style="text-align: left;">Validation method (if available)</td>
+<td style="text-align: center; font-weight: bold;">If possible</td>
+</tr>
+<tr class="even" data-grouplength="1">
+<td colspan="3" style="border-bottom: 1px solid"><strong>Spatial Analysis</strong></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Spatial Pattern</td>
+<td style="text-align: left;">Test for spatial clustering of failures</td>
+<td style="text-align: center; font-weight: bold;">Recommended</td>
+</tr>
+<tr class="even" data-grouplength="2">
+<td colspan="3" style="border-bottom: 1px solid"><strong>Validity Checks</strong></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Sensitivity</td>
+<td style="text-align: left;">Power analysis or simulation</td>
+<td style="text-align: center; font-weight: bold;">Recommended</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Sensitivity</td>
+<td style="text-align: left;">Robustness checks at different spatial scales</td>
+<td style="text-align: center; font-weight: bold;">Recommended</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+</div>
+</div>
+</section>
+<section id="when-to-be-especially-concerned" class="level3" data-number="4.1.2">
+<h3 data-number="4.1.2" class="anchored" data-anchor-id="when-to-be-especially-concerned"><span class="header-section-number">4.1.2</span> When to Be Especially Concerned</h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>concern_data <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">AnalysisType =</span> <span class="fu">c</span>(<span class="st">"Accessibility</span><span class="sc">\n</span><span class="st">(&lt;500m)"</span>, <span class="st">"Exposure</span><span class="sc">\n</span><span class="st">(buffer zones)"</span>, </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Cluster detection</span><span class="sc">\n</span><span class="st">(small area)"</span>, <span class="st">"Rate estimation</span><span class="sc">\n</span><span class="st">(county level)"</span>),</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">GeocodingRate =</span> <span class="fu">c</span>(<span class="st">"&lt;70%"</span>, <span class="st">"70-85%"</span>, <span class="st">"&gt;85%"</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">RiskLevel =</span> <span class="fu">case_when</span>(</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>      AnalysisType <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Accessibility</span><span class="sc">\n</span><span class="st">(&lt;500m)"</span>, <span class="st">"Exposure</span><span class="sc">\n</span><span class="st">(buffer zones)"</span>) <span class="sc">&amp;</span> </span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>        GeocodingRate <span class="sc">==</span> <span class="st">"&lt;70%"</span> <span class="sc">~</span> <span class="st">"High"</span>,</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>      AnalysisType <span class="sc">==</span> <span class="st">"Cluster detection</span><span class="sc">\n</span><span class="st">(small area)"</span> <span class="sc">&amp;</span> GeocodingRate <span class="sc">==</span> <span class="st">"&lt;70%"</span> <span class="sc">~</span> <span class="st">"High"</span>,</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>      AnalysisType <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Accessibility</span><span class="sc">\n</span><span class="st">(&lt;500m)"</span>, <span class="st">"Exposure</span><span class="sc">\n</span><span class="st">(buffer zones)"</span>) <span class="sc">&amp;</span> </span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>        GeocodingRate <span class="sc">==</span> <span class="st">"70-85%"</span> <span class="sc">~</span> <span class="st">"Moderate"</span>,</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>      AnalysisType <span class="sc">==</span> <span class="st">"Cluster detection</span><span class="sc">\n</span><span class="st">(small area)"</span> <span class="sc">&amp;</span> GeocodingRate <span class="sc">==</span> <span class="st">"70-85%"</span> <span class="sc">~</span> <span class="st">"Moderate"</span>,</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>      AnalysisType <span class="sc">==</span> <span class="st">"Rate estimation</span><span class="sc">\n</span><span class="st">(county level)"</span> <span class="sc">~</span> <span class="st">"Low"</span>,</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"Moderate"</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">RiskLevel =</span> <span class="fu">factor</span>(RiskLevel, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Low"</span>, <span class="st">"Moderate"</span>, <span class="st">"High"</span>))</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(concern_data, <span class="fu">aes</span>(<span class="at">x =</span> GeocodingRate, <span class="at">y =</span> AnalysisType, <span class="at">fill =</span> RiskLevel)) <span class="sc">+</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> RiskLevel), <span class="at">size =</span> <span class="dv">5</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>) <span class="sc">+</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Low"</span> <span class="ot">=</span> <span class="st">"#90EE90"</span>, <span class="st">"Moderate"</span> <span class="ot">=</span> <span class="st">"#FFD700"</span>, </span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"High"</span> <span class="ot">=</span> <span class="st">"#FF6347"</span>)) <span class="sc">+</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Risk Assessment Matrix: Impact of Incomplete Geocoding"</span>,</span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Geocoding Success Rate"</span>,</span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Type of Spatial Analysis"</span>,</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Risk Level"</span></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"right"</span>,</span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-concern-matrix" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="privacy_files/figure-html/fig-concern-matrix-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption class="figure-caption">Figure&nbsp;8: Risk matrix: When geocoding issues are most likely to affect conclusions</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="for-policy-makers" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="for-policy-makers"><span class="header-section-number">4.2</span> For Policy Makers</h2>
+<section id="five-critical-research-needs-jacquez2012" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="five-critical-research-needs-jacquez2012"><span class="header-section-number">4.2.1</span> Five Critical Research Needs <span class="citation" data-cites="Jacquez2012">(<a href="#ref-Jacquez2012" role="doc-biblioref">Jacquez 2012</a>)</span></h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggraph)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'ggraph' was built under R version 4.3.2</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidygraph)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'tidygraph' was built under R version 4.3.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'tidygraph'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:stats':
+
+    filter</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create hierarchical structure</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>agenda_edges <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">from =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"Geocoding</span><span class="sc">\n</span><span class="st">Challenge"</span>, <span class="dv">5</span>),</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>           <span class="st">"Need 1"</span>, <span class="st">"Need 1"</span>, <span class="st">"Need 2"</span>, <span class="st">"Need 2"</span>,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>           <span class="st">"Need 3"</span>, <span class="st">"Need 3"</span>, <span class="st">"Need 4"</span>, <span class="st">"Need 4"</span>,</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>           <span class="st">"Need 5"</span>, <span class="st">"Need 5"</span>),</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">to =</span> <span class="fu">c</span>(<span class="st">"Need 1"</span>, <span class="st">"Need 2"</span>, <span class="st">"Need 3"</span>, <span class="st">"Need 4"</span>, <span class="st">"Need 5"</span>,</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>         <span class="st">"Standardized</span><span class="sc">\n</span><span class="st">engines"</span>, <span class="st">"Documented</span><span class="sc">\n</span><span class="st">accuracy"</span>,</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>         <span class="st">"Urban</span><span class="sc">\n</span><span class="st">datasets"</span>, <span class="st">"Rural</span><span class="sc">\n</span><span class="st">datasets"</span>,</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>         <span class="st">"Spatial error</span><span class="sc">\n</span><span class="st">models"</span>, <span class="st">"Predictive</span><span class="sc">\n</span><span class="st">tools"</span>,</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>         <span class="st">"Sensitivity</span><span class="sc">\n</span><span class="st">methods"</span>, <span class="st">"User-friendly</span><span class="sc">\n</span><span class="st">software"</span>,</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>         <span class="st">"Policy</span><span class="sc">\n</span><span class="st">impact studies"</span>, <span class="st">"Health</span><span class="sc">\n</span><span class="st">outcome studies"</span>)</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>agenda_nodes <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">unique</span>(<span class="fu">c</span>(agenda_edges<span class="sc">$</span>from, agenda_edges<span class="sc">$</span>to)),</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">level =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">2</span>, <span class="dv">10</span>))</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>graph <span class="ot">&lt;-</span> <span class="fu">tbl_graph</span>(<span class="at">nodes =</span> agenda_nodes, <span class="at">edges =</span> agenda_edges, <span class="at">directed =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a><span class="fu">ggraph</span>(graph, <span class="at">layout =</span> <span class="st">'tree'</span>) <span class="sc">+</span></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_edge_link</span>(<span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="dv">3</span>, <span class="st">'mm'</span>)), </span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>                 <span class="at">end_cap =</span> <span class="fu">circle</span>(<span class="dv">5</span>, <span class="st">'mm'</span>),</span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>                 <span class="at">edge_width =</span> <span class="fl">1.2</span>, <span class="at">edge_colour =</span> <span class="st">"#2C5F87"</span>) <span class="sc">+</span></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_node_point</span>(<span class="fu">aes</span>(<span class="at">size =</span> <span class="fu">ifelse</span>(level <span class="sc">==</span> <span class="dv">0</span>, <span class="dv">10</span>, <span class="fu">ifelse</span>(level <span class="sc">==</span> <span class="dv">1</span>, <span class="dv">7</span>, <span class="dv">4</span>))),</span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>                  <span class="at">color =</span> <span class="st">"#D69C4E"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_node_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> name), <span class="at">size =</span> <span class="dv">3</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>, <span class="at">repel =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_size_identity</span>() <span class="sc">+</span></span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Research Agenda to Address Geocoding Challenges"</span>,</span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Five critical needs identified by Jacquez (2012)"</span></span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_graph</span>() <span class="sc">+</span></span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>)</span>
+<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-research-agenda" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="privacy_files/figure-html/fig-research-agenda-1.png" class="img-fluid figure-img" width="1152"></p>
+<figcaption class="figure-caption">Figure&nbsp;9: Research agenda for addressing geocoding challenges (Jacquez 2012)</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Need 1: Standardized Resources</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Need 2: Validation Datasets</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">Need 3: Error Models</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">Need 4: Assessment Tools</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">Need 5: Demonstration Studies</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p><strong>Problem</strong>: No standard open-access geocoding resource with documented accuracy</p>
+<p><strong>Solution</strong>: Develop and maintain standardized geocoding engines with quantitative error metrics</p>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p><strong>Problem</strong>: True coordinates rarely known; can’t assess positional accuracy</p>
+<p><strong>Solution</strong>: Create ground-truthed validation datasets for diverse geographic settings</p>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<p><strong>Problem</strong>: Limited understanding of error distributions across geographies</p>
+<p><strong>Solution</strong>: Develop spatially explicit predictive models of geocoding error</p>
+</div>
+<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
+<p><strong>Problem</strong>: Methods exist but aren’t accessible to practitioners</p>
+<p><strong>Solution</strong>: Create user-friendly software for routine sensitivity analysis</p>
+</div>
+<div id="tabset-1-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-5-tab">
+<p><strong>Problem</strong>: Limited awareness of problem magnitude and consequences</p>
+<p><strong>Solution</strong>: Publish case studies showing real public health decision impacts</p>
+</div>
+</div>
+</div>
+</section>
+<section id="hipaa-reform-proposals" class="level3" data-number="4.2.2">
+<h3 data-number="4.2.2" class="anchored" data-anchor-id="hipaa-reform-proposals"><span class="header-section-number">4.2.2</span> HIPAA Reform Proposals</h3>
+<p>Based on <span class="citation" data-cites="Tellman2010">Tellman et al. (<a href="#ref-Tellman2010" role="doc-biblioref">2010</a>)</span> and IOM (2009) recommendations:</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Approach =</span> <span class="fu">c</span>(</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Current HIPAA Rule"</span>,</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Controlled Access"</span>,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Differential Privacy"</span>,</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Geographic Masking"</span>,</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Secure Computation"</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">Description =</span> <span class="fu">c</span>(</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"3-digit ZIP codes only (pop &gt;20K)"</span>,</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"IRB-approved researchers access exact data under DUA"</span>,</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Add calibrated noise to maintain statistical properties"</span>,</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Randomly displace points within threshold distance"</span>,</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Analyze data without revealing locations"</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Privacy Protection</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Moderate"</span>, <span class="st">"High"</span>, <span class="st">"Quantifiable"</span>, <span class="st">"Adjustable"</span>, <span class="st">"High"</span>),</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Analytical Utility</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Low (~28% error)"</span>, <span class="st">"High"</span>, <span class="st">"Moderate-High"</span>, <span class="st">"Moderate-High"</span>, <span class="st">"Varies"</span>),</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Implementation</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Simple"</span>, <span class="st">"Moderate"</span>, <span class="st">"Complex"</span>, <span class="st">"Moderate"</span>, <span class="st">"Complex"</span>),</span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Example Use</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Current practice"</span>,</span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Cancer registries"</span>,</span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Census data"</span>,</span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Disease mapping"</span>,</span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Multi-site studies"</span></span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">align =</span> <span class="fu">c</span>(<span class="st">'l'</span>, <span class="st">'l'</span>, <span class="st">'c'</span>, <span class="st">'c'</span>, <span class="st">'c'</span>, <span class="st">'l'</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="dv">1</span>, <span class="at">background =</span> <span class="st">"#FFE6E6"</span>) <span class="sc">%&gt;%</span>  <span class="co"># Highlight current approach</span></span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">background =</span> <span class="st">"#E6FFE6"</span>)    <span class="co"># Highlight alternatives</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: 'xfun::attr()' is deprecated.
+Use 'xfun::attr2()' instead.
+See help("Deprecated")</code></pre>
+</div>
+<div class="cell-output-display">
+<div id="tbl-hipaa-alternatives" class="anchored">
+<table class="table table-striped table-hover table-sm small" data-quarto-postprocess="true">
+<caption>Table&nbsp;2: Alternative approaches to geographic privacy protection</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Approach</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Description</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Privacy Protection</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Analytical Utility</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Implementation</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Example Use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; background-color: #FFE6E6 !important;">Current HIPAA Rule</td>
+<td style="text-align: left; background-color: #FFE6E6 !important;">3-digit ZIP codes only (pop &gt;20K)</td>
+<td style="text-align: center; background-color: #FFE6E6 !important;">Moderate</td>
+<td style="text-align: center; background-color: #FFE6E6 !important;">Low (~28% error)</td>
+<td style="text-align: center; background-color: #FFE6E6 !important;">Simple</td>
+<td style="text-align: left; background-color: #FFE6E6 !important;">Current practice</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: #E6FFE6 !important;">Controlled Access</td>
+<td style="text-align: left; background-color: #E6FFE6 !important;">IRB-approved researchers access exact data under DUA</td>
+<td style="text-align: center; background-color: #E6FFE6 !important;">High</td>
+<td style="text-align: center; background-color: #E6FFE6 !important;">High</td>
+<td style="text-align: center; background-color: #E6FFE6 !important;">Moderate</td>
+<td style="text-align: left; background-color: #E6FFE6 !important;">Cancer registries</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: #E6FFE6 !important;">Differential Privacy</td>
+<td style="text-align: left; background-color: #E6FFE6 !important;">Add calibrated noise to maintain statistical properties</td>
+<td style="text-align: center; background-color: #E6FFE6 !important;">Quantifiable</td>
+<td style="text-align: center; background-color: #E6FFE6 !important;">Moderate-High</td>
+<td style="text-align: center; background-color: #E6FFE6 !important;">Complex</td>
+<td style="text-align: left; background-color: #E6FFE6 !important;">Census data</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: #E6FFE6 !important;">Geographic Masking</td>
+<td style="text-align: left; background-color: #E6FFE6 !important;">Randomly displace points within threshold distance</td>
+<td style="text-align: center; background-color: #E6FFE6 !important;">Adjustable</td>
+<td style="text-align: center; background-color: #E6FFE6 !important;">Moderate-High</td>
+<td style="text-align: center; background-color: #E6FFE6 !important;">Moderate</td>
+<td style="text-align: left; background-color: #E6FFE6 !important;">Disease mapping</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: #E6FFE6 !important;">Secure Computation</td>
+<td style="text-align: left; background-color: #E6FFE6 !important;">Analyze data without revealing locations</td>
+<td style="text-align: center; background-color: #E6FFE6 !important;">High</td>
+<td style="text-align: center; background-color: #E6FFE6 !important;">Varies</td>
+<td style="text-align: center; background-color: #E6FFE6 !important;">Complex</td>
+<td style="text-align: left; background-color: #E6FFE6 !important;">Multi-site studies</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+IOM (2009) Key Recommendation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>“The committee proposes a bold, innovative, and more uniform approach to the dual challenge of protecting privacy while supporting beneficial and responsible research”</p>
+<p>Current HIPAA rules should be revised to better balance privacy and scientific utility.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="for-public-health-practice" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="for-public-health-practice"><span class="header-section-number">4.3</span> For Public Health Practice</h2>
+<section id="decision-tree-for-handling-geocoding-issues" class="level3" data-number="4.3.1">
+<h3 data-number="4.3.1" class="anchored" data-anchor-id="decision-tree-for-handling-geocoding-issues"><span class="header-section-number">4.3.1</span> Decision Tree for Handling Geocoding Issues</h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DiagrammeR)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'DiagrammeR' was built under R version 4.3.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'DiagrammeR'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:ggraph':
+
+    get_edges</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grViz</span>(<span class="st">"</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="st">digraph decision_tree {</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="st">  graph [rankdir = TB, fontname = Helvetica, bgcolor = transparent]</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="st">  node [shape = box, style = filled, fontname = Helvetica, fontsize = 10]</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="st">  edge [fontname = Helvetica, fontsize = 9]</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="st">  start [label = 'Geocoding Complete', fillcolor = '#E6F3FF', shape = diamond]</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="st">  check_rate [label = 'Geocoding Rate?', fillcolor = '#FFE6CC', shape = diamond]</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="st">  high_rate [label = '≥90% Success</span><span class="sc">\n</span><span class="st">Proceed with caution', fillcolor = '#90EE90']</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="st">  mod_rate [label = '70-90% Success</span><span class="sc">\n</span><span class="st">Investigate patterns', fillcolor = '#FFD700']</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="st">  low_rate [label = '&lt;70% Success</span><span class="sc">\n</span><span class="st">High risk of bias', fillcolor = '#FF6347']</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="st">  test_spatial [label = 'Test for spatial</span><span class="sc">\n</span><span class="st">clustering of failures?', fillcolor = '#FFE6CC', shape = diamond]</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="st">  clustered [label = 'Failures are</span><span class="sc">\n</span><span class="st">clustered', fillcolor = '#FFB6C1']</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="st">  random [label = 'Failures appear</span><span class="sc">\n</span><span class="st">random', fillcolor = '#ADD8E6']</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="st">  check_association [label = 'Disease associated</span><span class="sc">\n</span><span class="st">with geocoding failure?', fillcolor = '#FFE6CC', shape = diamond]</span></span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a><span class="st">  associated [label = 'Positive association</span><span class="sc">\n</span><span class="st">(e.g., rural disease)', fillcolor = '#FF6347']</span></span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a><span class="st">  independent [label = 'Independent</span><span class="sc">\n</span><span class="st">(reasonable assumption)', fillcolor = '#90EE90']</span></span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a><span class="st">  // Actions</span></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a><span class="st">  action1 [label = 'Report limitations</span><span class="sc">\n</span><span class="st">Proceed with analysis', fillcolor = '#E6FFE6', shape = ellipse]</span></span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a><span class="st">  action2 [label = 'Conduct sensitivity analysis</span><span class="sc">\n</span><span class="st">Multiple spatial scales', fillcolor = '#FFF9E6', shape = ellipse]</span></span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a><span class="st">  action3 [label = 'Major concern:</span><span class="sc">\n</span><span class="st">• Consider improving geocoding</span><span class="sc">\n</span><span class="st">• Adjust methods</span><span class="sc">\n</span><span class="st">• Prominent limitations', fillcolor = '#FFE6E6', shape = ellipse]</span></span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a><span class="st">  action4 [label = 'Test power reduction</span><span class="sc">\n</span><span class="st">Document spatial bias</span><span class="sc">\n</span><span class="st">Consider weighted analysis', fillcolor = '#FFE6E6', shape = ellipse]</span></span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a><span class="st">  // Edges</span></span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a><span class="st">  start -&gt; check_rate</span></span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a><span class="st">  check_rate -&gt; high_rate [label = '≥90%']</span></span>
+<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a><span class="st">  check_rate -&gt; mod_rate [label = '70-90%']</span></span>
+<span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a><span class="st">  check_rate -&gt; low_rate [label = '&lt;70%']</span></span>
+<span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb26-33"><a href="#cb26-33" aria-hidden="true" tabindex="-1"></a><span class="st">  high_rate -&gt; action1</span></span>
+<span id="cb26-34"><a href="#cb26-34" aria-hidden="true" tabindex="-1"></a><span class="st">  mod_rate -&gt; test_spatial</span></span>
+<span id="cb26-35"><a href="#cb26-35" aria-hidden="true" tabindex="-1"></a><span class="st">  low_rate -&gt; test_spatial</span></span>
+<span id="cb26-36"><a href="#cb26-36" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb26-37"><a href="#cb26-37" aria-hidden="true" tabindex="-1"></a><span class="st">  test_spatial -&gt; clustered [label = 'Yes</span><span class="sc">\n</span><span class="st">(p&lt;0.05)']</span></span>
+<span id="cb26-38"><a href="#cb26-38" aria-hidden="true" tabindex="-1"></a><span class="st">  test_spatial -&gt; random [label = 'No']</span></span>
+<span id="cb26-39"><a href="#cb26-39" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb26-40"><a href="#cb26-40" aria-hidden="true" tabindex="-1"></a><span class="st">  clustered -&gt; check_association</span></span>
+<span id="cb26-41"><a href="#cb26-41" aria-hidden="true" tabindex="-1"></a><span class="st">  random -&gt; action2</span></span>
+<span id="cb26-42"><a href="#cb26-42" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb26-43"><a href="#cb26-43" aria-hidden="true" tabindex="-1"></a><span class="st">  check_association -&gt; associated [label = 'Likely']</span></span>
+<span id="cb26-44"><a href="#cb26-44" aria-hidden="true" tabindex="-1"></a><span class="st">  check_association -&gt; independent [label = 'Unlikely']</span></span>
+<span id="cb26-45"><a href="#cb26-45" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb26-46"><a href="#cb26-46" aria-hidden="true" tabindex="-1"></a><span class="st">  associated -&gt; action4</span></span>
+<span id="cb26-47"><a href="#cb26-47" aria-hidden="true" tabindex="-1"></a><span class="st">  independent -&gt; action3</span></span>
+<span id="cb26-48"><a href="#cb26-48" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb26-49"><a href="#cb26-49" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="fig-decision-tree" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<div class="grViz html-widget html-fill-item" id="htmlwidget-7e612013054548918011" style="width:100%;height:541px;"></div>
+<script type="application/json" data-for="htmlwidget-7e612013054548918011">{"x":{"diagram":"\ndigraph decision_tree {\n  graph [rankdir = TB, fontname = Helvetica, bgcolor = transparent]\n  node [shape = box, style = filled, fontname = Helvetica, fontsize = 10]\n  edge [fontname = Helvetica, fontsize = 9]\n  \n  start [label = \"Geocoding Complete\", fillcolor = \"#E6F3FF\", shape = diamond]\n  check_rate [label = \"Geocoding Rate?\", fillcolor = \"#FFE6CC\", shape = diamond]\n  high_rate [label = \"≥90% Success\nProceed with caution\", fillcolor = \"#90EE90\"]\n  mod_rate [label = \"70-90% Success\nInvestigate patterns\", fillcolor = \"#FFD700\"]\n  low_rate [label = \"<70% Success\nHigh risk of bias\", fillcolor = \"#FF6347\"]\n  \n  test_spatial [label = \"Test for spatial\nclustering of failures?\", fillcolor = \"#FFE6CC\", shape = diamond]\n  clustered [label = \"Failures are\nclustered\", fillcolor = \"#FFB6C1\"]\n  random [label = \"Failures appear\nrandom\", fillcolor = \"#ADD8E6\"]\n  \n  check_association [label = \"Disease associated\nwith geocoding failure?\", fillcolor = \"#FFE6CC\", shape = diamond]\n  associated [label = \"Positive association\n(e.g., rural disease)\", fillcolor = \"#FF6347\"]\n  independent [label = \"Independent\n(reasonable assumption)\", fillcolor = \"#90EE90\"]\n  \n  // Actions\n  action1 [label = \"Report limitations\nProceed with analysis\", fillcolor = \"#E6FFE6\", shape = ellipse]\n  action2 [label = \"Conduct sensitivity analysis\nMultiple spatial scales\", fillcolor = \"#FFF9E6\", shape = ellipse]\n  action3 [label = \"Major concern:\n• Consider improving geocoding\n• Adjust methods\n• Prominent limitations\", fillcolor = \"#FFE6E6\", shape = ellipse]\n  action4 [label = \"Test power reduction\nDocument spatial bias\nConsider weighted analysis\", fillcolor = \"#FFE6E6\", shape = ellipse]\n  \n  // Edges\n  start -> check_rate\n  check_rate -> high_rate [label = \"≥90%\"]\n  check_rate -> mod_rate [label = \"70-90%\"]\n  check_rate -> low_rate [label = \"<70%\"]\n  \n  high_rate -> action1\n  mod_rate -> test_spatial\n  low_rate -> test_spatial\n  \n  test_spatial -> clustered [label = \"Yes\n(p<0.05)\"]\n  test_spatial -> random [label = \"No\"]\n  \n  clustered -> check_association\n  random -> action2\n  \n  check_association -> associated [label = \"Likely\"]\n  check_association -> independent [label = \"Unlikely\"]\n  \n  associated -> action4\n  independent -> action3\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<figcaption class="figure-caption">Figure&nbsp;10: Decision tree for addressing geocoding challenges in public health practice</figcaption>
+</figure>
+</div>
+</div>
+</section>
+<section id="best-practices-checklist" class="level3" data-number="4.3.2">
+<h3 data-number="4.3.2" class="anchored" data-anchor-id="best-practices-checklist"><span class="header-section-number">4.3.2</span> Best Practices Checklist</h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Public Health GIS Best Practices
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Before Analysis:</strong></p>
+<ul class="task-list">
+<li><input type="checkbox">Document geocoding method and success rate</li>
+<li><input type="checkbox">Test for spatial clustering of failures</li>
+<li><input type="checkbox">Compare success rates across subgroups</li>
+<li><input type="checkbox">Obtain validation dataset if possible</li>
+</ul>
+<p><strong>During Analysis:</strong></p>
+<ul class="task-list">
+<li><input type="checkbox">Use multiple spatial scales</li>
+<li><input type="checkbox">Conduct sensitivity analyses</li>
+<li><input type="checkbox">Consider alternative distance metrics (network vs.&nbsp;Euclidean)</li>
+<li><input type="checkbox">Document power calculations</li>
+</ul>
+<p><strong>When Publishing:</strong></p>
+<ul class="task-list">
+<li><input type="checkbox">Report complete geocoding statistics</li>
+<li><input type="checkbox">Include maps showing geocoded locations</li>
+<li><input type="checkbox">Discuss limitations prominently</li>
+<li><input type="checkbox">Provide access to methods (if not data)</li>
+<li><input type="checkbox">Consider pre-registration of methods</li>
+</ul>
+<p><strong>Red Flags:</strong></p>
+<ul class="task-list">
+<li><input type="checkbox">&lt;70% geocoding rate without investigation</li>
+<li><input type="checkbox">Small-area analysis (&lt;1km²) with poor geocoding</li>
+<li><input type="checkbox">Narrow buffer zones (&lt;500m) for exposure</li>
+<li><input type="checkbox">Claims of absence of clusters without sensitivity analysis</li>
+</ul>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="conclusions" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Conclusions</h1>
+<section id="summary-of-evidence" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="summary-of-evidence"><span class="header-section-number">5.1</span> Summary of Evidence</h2>
+<ol type="1">
+<li><p><strong>Geocoding positional error is substantial and spatially patterned</strong></p>
+<ul>
+<li>Rural errors 2-10× larger than urban</li>
+<li>Can exceed 10km in extreme cases</li>
+<li>Affects all types of spatial analysis</li>
+</ul></li>
+<li><p><strong>Geocoding failure is spatially clustered</strong></p>
+<ul>
+<li>Overwhelming statistical evidence (all p&lt;0.001)</li>
+<li>More pronounced in urban areas (missing street segments)</li>
+<li>Also systematic in rural areas (low overall rates)</li>
+</ul></li>
+<li><p><strong>HIPAA 3-digit rule introduces ~28% systematic error</strong></p>
+<ul>
+<li>Creates geographic bias (urban shortages, rural surpluses)</li>
+<li>Reduces cluster detection power by 20-70%</li>
+<li>Effect compounds when disease and failure are associated</li>
+</ul></li>
+<li><p><strong>Multiple spatial analyses are affected</strong></p>
+<ul>
+<li>Accessibility measures</li>
+<li>Disease rate estimation<br>
+</li>
+<li>Cluster detection (power reduction)</li>
+<li>Exposure assessment</li>
+<li>Spatial weights (up to 100% error)</li>
+</ul></li>
+</ol>
+</section>
+<section id="the-path-forward" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="the-path-forward"><span class="header-section-number">5.2</span> The Path Forward</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DiagrammeR)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">grViz</span>(<span class="st">"</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="st">digraph framework {</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="st">  graph [rankdir = LR, fontname = Helvetica, bgcolor = transparent, nodesep = 0.5, ranksep = 0.8]</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="st">  node [shape = box, style = 'filled,rounded', fontname = Helvetica, fontsize = 10]</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="st">  edge [fontname = Helvetica, fontsize = 9]</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="st">  subgraph cluster_0 {</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="st">    label = 'Technical Solutions'</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="st">    style = filled</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="st">    fillcolor = '#E6F3FF'</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="st">    tech1 [label = 'Better Geocoding</span><span class="sc">\n</span><span class="st">Algorithms', fillcolor = '#B3D9FF']</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="st">    tech2 [label = 'Error Models &amp;</span><span class="sc">\n</span><span class="st">Prediction', fillcolor = '#B3D9FF']</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a><span class="st">    tech3 [label = 'Sensitivity</span><span class="sc">\n</span><span class="st">Analysis Tools', fillcolor = '#B3D9FF']</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a><span class="st">    tech4 [label = 'Validation</span><span class="sc">\n</span><span class="st">Datasets', fillcolor = '#B3D9FF']</span></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a><span class="st">  subgraph cluster_1 {</span></span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a><span class="st">    label = 'Policy Solutions'</span></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a><span class="st">    style = filled</span></span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a><span class="st">    fillcolor = '#FFE6CC'</span></span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a><span class="st">    policy1 [label = 'HIPAA Reform:</span><span class="sc">\n</span><span class="st">Controlled Access', fillcolor = '#FFD699']</span></span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a><span class="st">    policy2 [label = 'Alternative Privacy</span><span class="sc">\n</span><span class="st">Methods', fillcolor = '#FFD699']</span></span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a><span class="st">    policy3 [label = 'Standardized</span><span class="sc">\n</span><span class="st">Reporting', fillcolor = '#FFD699']</span></span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a><span class="st">  subgraph cluster_2 {</span></span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a><span class="st">    label = 'Methodological Solutions'</span></span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a><span class="st">    style = filled</span></span>
+<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a><span class="st">    fillcolor = '#E6FFE6'</span></span>
+<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb27-35"><a href="#cb27-35" aria-hidden="true" tabindex="-1"></a><span class="st">    method1 [label = 'Uncertainty</span><span class="sc">\n</span><span class="st">Propagation', fillcolor = '#B3FFB3']</span></span>
+<span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a><span class="st">    method2 [label = 'Multi-scale</span><span class="sc">\n</span><span class="st">Analysis', fillcolor = '#B3FFB3']</span></span>
+<span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a><span class="st">    method3 [label = 'Bayesian</span><span class="sc">\n</span><span class="st">Approaches', fillcolor = '#B3FFB3']</span></span>
+<span id="cb27-38"><a href="#cb27-38" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb27-39"><a href="#cb27-39" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb27-40"><a href="#cb27-40" aria-hidden="true" tabindex="-1"></a><span class="st">  outcome [label = 'Valid Spatial</span><span class="sc">\n</span><span class="st">Epidemiology', shape = ellipse, fillcolor = '#FFD700', </span></span>
+<span id="cb27-41"><a href="#cb27-41" aria-hidden="true" tabindex="-1"></a><span class="st">           fontsize = 14, width = 2, style = 'filled,bold']</span></span>
+<span id="cb27-42"><a href="#cb27-42" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb27-43"><a href="#cb27-43" aria-hidden="true" tabindex="-1"></a><span class="st">  tech1 -&gt; outcome</span></span>
+<span id="cb27-44"><a href="#cb27-44" aria-hidden="true" tabindex="-1"></a><span class="st">  tech2 -&gt; outcome</span></span>
+<span id="cb27-45"><a href="#cb27-45" aria-hidden="true" tabindex="-1"></a><span class="st">  tech3 -&gt; outcome</span></span>
+<span id="cb27-46"><a href="#cb27-46" aria-hidden="true" tabindex="-1"></a><span class="st">  tech4 -&gt; outcome</span></span>
+<span id="cb27-47"><a href="#cb27-47" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb27-48"><a href="#cb27-48" aria-hidden="true" tabindex="-1"></a><span class="st">  policy1 -&gt; outcome</span></span>
+<span id="cb27-49"><a href="#cb27-49" aria-hidden="true" tabindex="-1"></a><span class="st">  policy2 -&gt; outcome</span></span>
+<span id="cb27-50"><a href="#cb27-50" aria-hidden="true" tabindex="-1"></a><span class="st">  policy3 -&gt; outcome</span></span>
+<span id="cb27-51"><a href="#cb27-51" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb27-52"><a href="#cb27-52" aria-hidden="true" tabindex="-1"></a><span class="st">  method1 -&gt; outcome</span></span>
+<span id="cb27-53"><a href="#cb27-53" aria-hidden="true" tabindex="-1"></a><span class="st">  method2 -&gt; outcome</span></span>
+<span id="cb27-54"><a href="#cb27-54" aria-hidden="true" tabindex="-1"></a><span class="st">  method3 -&gt; outcome</span></span>
+<span id="cb27-55"><a href="#cb27-55" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb27-56"><a href="#cb27-56" aria-hidden="true" tabindex="-1"></a><span class="st">  tech1 -&gt; tech2 [style = dashed]</span></span>
+<span id="cb27-57"><a href="#cb27-57" aria-hidden="true" tabindex="-1"></a><span class="st">  tech2 -&gt; tech3 [style = dashed]</span></span>
+<span id="cb27-58"><a href="#cb27-58" aria-hidden="true" tabindex="-1"></a><span class="st">  tech4 -&gt; tech1 [style = dashed]</span></span>
+<span id="cb27-59"><a href="#cb27-59" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb27-60"><a href="#cb27-60" aria-hidden="true" tabindex="-1"></a><span class="st">  policy1 -&gt; policy2 [style = dashed]</span></span>
+<span id="cb27-61"><a href="#cb27-61" aria-hidden="true" tabindex="-1"></a><span class="st">  policy3 -&gt; method3 [style = dashed]</span></span>
+<span id="cb27-62"><a href="#cb27-62" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb27-63"><a href="#cb27-63" aria-hidden="true" tabindex="-1"></a><span class="st">  method1 -&gt; method2 [style = dashed]</span></span>
+<span id="cb27-64"><a href="#cb27-64" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb27-65"><a href="#cb27-65" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="fig-framework" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<div class="grViz html-widget html-fill-item" id="htmlwidget-a9edae4ed915c525f866" style="width:100%;height:433px;"></div>
+<script type="application/json" data-for="htmlwidget-a9edae4ed915c525f866">{"x":{"diagram":"\ndigraph framework {\n  graph [rankdir = LR, fontname = Helvetica, bgcolor = transparent, nodesep = 0.5, ranksep = 0.8]\n  node [shape = box, style = \"filled,rounded\", fontname = Helvetica, fontsize = 10]\n  edge [fontname = Helvetica, fontsize = 9]\n  \n  subgraph cluster_0 {\n    label = \"Technical Solutions\"\n    style = filled\n    fillcolor = \"#E6F3FF\"\n    \n    tech1 [label = \"Better Geocoding\nAlgorithms\", fillcolor = \"#B3D9FF\"]\n    tech2 [label = \"Error Models &\nPrediction\", fillcolor = \"#B3D9FF\"]\n    tech3 [label = \"Sensitivity\nAnalysis Tools\", fillcolor = \"#B3D9FF\"]\n    tech4 [label = \"Validation\nDatasets\", fillcolor = \"#B3D9FF\"]\n  }\n  \n  subgraph cluster_1 {\n    label = \"Policy Solutions\"\n    style = filled\n    fillcolor = \"#FFE6CC\"\n    \n    policy1 [label = \"HIPAA Reform:\nControlled Access\", fillcolor = \"#FFD699\"]\n    policy2 [label = \"Alternative Privacy\nMethods\", fillcolor = \"#FFD699\"]\n    policy3 [label = \"Standardized\nReporting\", fillcolor = \"#FFD699\"]\n  }\n  \n  subgraph cluster_2 {\n    label = \"Methodological Solutions\"\n    style = filled\n    fillcolor = \"#E6FFE6\"\n    \n    method1 [label = \"Uncertainty\nPropagation\", fillcolor = \"#B3FFB3\"]\n    method2 [label = \"Multi-scale\nAnalysis\", fillcolor = \"#B3FFB3\"]\n    method3 [label = \"Bayesian\nApproaches\", fillcolor = \"#B3FFB3\"]\n  }\n  \n  outcome [label = \"Valid Spatial\nEpidemiology\", shape = ellipse, fillcolor = \"#FFD700\", \n           fontsize = 14, width = 2, style = \"filled,bold\"]\n  \n  tech1 -> outcome\n  tech2 -> outcome\n  tech3 -> outcome\n  tech4 -> outcome\n  \n  policy1 -> outcome\n  policy2 -> outcome\n  policy3 -> outcome\n  \n  method1 -> outcome\n  method2 -> outcome\n  method3 -> outcome\n  \n  tech1 -> tech2 [style = dashed]\n  tech2 -> tech3 [style = dashed]\n  tech4 -> tech1 [style = dashed]\n  \n  policy1 -> policy2 [style = dashed]\n  policy3 -> method3 [style = dashed]\n  \n  method1 -> method2 [style = dashed]\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<figcaption class="figure-caption">Figure&nbsp;11: Integrated framework for addressing geocoding challenges</figcaption>
+</figure>
+</div>
+</div>
+</section>
+<section id="final-thoughts" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="final-thoughts"><span class="header-section-number">5.3</span> Final Thoughts</h2>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The Bottom Line
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Without addressing geocoding challenges through technical advances, policy reforms, and methodological development, spatial epidemiology risks:</p>
+<ol type="1">
+<li><strong>Drawing incorrect conclusions</strong> about disease patterns</li>
+<li><strong>Making poor resource allocation decisions</strong></li>
+<li><strong>Exacerbating health disparities</strong> through systematic bias</li>
+<li><strong>Undermining public trust</strong> through privacy breaches or poor science</li>
+</ol>
+</div>
+</div>
+
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-Jacquez2012" class="csl-entry" role="listitem">
+Jacquez, Geoffrey M. 2012. <span>“A Research Agenda: <span>Does</span> Geocoding Positional Error Matter in Health <span>GIS</span> Studies?”</span> <em>Spatial and Spatio-Temporal Epidemiology</em> 3 (1): 7–16. <a href="https://doi.org/10.1016/j.sste.2012.02.002">https://doi.org/10.1016/j.sste.2012.02.002</a>.
+</div>
+<div id="ref-Olson2006" class="csl-entry" role="listitem">
+Olson, Karen L., Shaun J. Grannis, and Kenneth D. Mandl. 2006. <span>“Privacy Protection Versus Cluster Detection in Spatial Epidemiology.”</span> <em>American Journal of Public Health</em> 96 (11): 2002–8. <a href="https://doi.org/10.2105/AJPH.2005.069526">https://doi.org/10.2105/AJPH.2005.069526</a>.
+</div>
+<div id="ref-Tellman2010" class="csl-entry" role="listitem">
+Tellman, Norisse, Eric R. Litt, Caprice Knapp, Aaron Eagan, Jing Cheng, and Lewis J. Radonovich. 2010. <span>“The Effects of the <span class="nocase">Health Insurance Portability and Accountability Act</span> Privacy Rule on Influenza Research Using Geographical Information Systems.”</span> <em>Geospatial Health</em> 5 (1): 3–9. <a href="https://doi.org/10.4081/gh.2010.184">https://doi.org/10.4081/gh.2010.184</a>.
+</div>
+<div id="ref-Zimmerman2008" class="csl-entry" role="listitem">
+Zimmerman, Dale L., Xiangming Fang, and Soumya Mazumdar. 2008. <span>“Spatial Clustering of the Failure to Geocode and Its Implications for the Detection of Disease Clustering.”</span> <em>Statistics in Medicine</em> 27 (21): 4254–66. <a href="https://doi.org/10.1002/sim.3288">https://doi.org/10.1002/sim.3288</a>.
+</div>
+</div></section></div></main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
